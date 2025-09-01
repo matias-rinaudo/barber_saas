@@ -1,0 +1,130 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow">
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4">Registrarse</h2>
+        
+        <%= form_with(model: resource, as: resource_name, url: user_registration_path, local: true, class: "needs-validation", novalidate: true) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          
+          <div class="mb-3">
+            <%= f.label :name, "Nombre completo", class: "form-label" %>
+            <%= f.text_field :name, autofocus: true, class: "form-control", required: true %>
+            <div class="invalid-feedback">
+              Por favor ingresa tu nombre completo.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :email, class: "form-label" %>
+            <%= f.email_field :email, autocomplete: "email", class: "form-control", required: true %>
+            <div class="invalid-feedback">
+              Por favor ingresa un email válido.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :password, "Contraseña", class: "form-label" %>
+            <%= f.password_field :password, autocomplete: "new-password", class: "form-control", required: true %>
+            <div class="form-text">
+              <% if @minimum_password_length %>
+                Mínimo <%= @minimum_password_length %> caracteres.
+              <% end %>
+            </div>
+            <div class="invalid-feedback">
+              La contraseña es requerida.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :password_confirmation, "Confirmar contraseña", class: "form-label" %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", required: true %>
+            <div class="invalid-feedback">
+              Por favor confirma tu contraseña.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :role, "Tipo de usuario", class: "form-label" %>
+            <%= f.select :role, 
+                options_for_select([
+                  ['Cliente', 'customer'],
+                  ['Barbero', 'barber'],
+                  ['Propietario', 'owner']
+                ], params[:role] || 'customer'), 
+                {}, 
+                { class: "form-select", id: "role-select", required: true } %>
+            <div class="invalid-feedback">
+              Por favor selecciona un tipo de usuario.
+            </div>
+          </div>
+
+          <!-- Barbería (solo visible para cliente y barbero) -->
+          <div class="mb-3" id="barbershop-select" style="display:none;">
+            <%= f.label :barbershop_id, "Selecciona tu barbería", class: "form-label" %>
+            <%= f.collection_select :barbershop_id, Barbershop.all, :id, :name, { prompt: "Elige una barbería" }, { class: "form-select" } %>
+            <div class="invalid-feedback">
+              Por favor selecciona una barbería.
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <%= f.submit "Registrarse", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+
+        <div class="mt-3 text-center">
+          <span class="text-muted">¿Ya tienes cuenta?</span>
+          <%= link_to "Inicia sesión aquí", new_user_session_path, class: "text-decoration-none" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Bootstrap form validation + toggle barbería según rol
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      var forms = document.getElementsByClassName('needs-validation');
+
+      // Validación de contraseñas + required
+      Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          var password = form.querySelector('[name="user[password]"]');
+          var passwordConfirmation = form.querySelector('[name="user[password_confirmation]"]');
+          
+          if (password && passwordConfirmation) {
+            if (password.value !== passwordConfirmation.value) {
+              passwordConfirmation.setCustomValidity("Las contraseñas no coinciden");
+            } else {
+              passwordConfirmation.setCustomValidity("");
+            }
+          }
+          
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+
+      // Mostrar/ocultar barbería según rol
+      const roleSelect = document.getElementById("role-select");
+      const barbershopSelect = document.getElementById("barbershop-select");
+
+      function toggleBarbershop() {
+        if (roleSelect.value === "barber" || roleSelect.value === "customer") {
+          barbershopSelect.style.display = "block";
+        } else {
+          barbershopSelect.style.display = "none";
+        }
+      }
+
+      roleSelect.addEventListener("change", toggleBarbershop);
+      toggleBarbershop(); // inicial
+    }, false);
+  })();
+</script>

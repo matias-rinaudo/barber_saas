@@ -1,0 +1,70 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow">
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4">Iniciar sesión</h2>
+        
+        <%= form_with(model: resource, as: resource_name, url: session_path(resource_name), local: true, class: "needs-validation", novalidate: true) do |f| %>
+          <%= hidden_field_tag :role, params[:role] %>
+
+          <div class="mb-3">
+            <%= f.label :email, class: "form-label" %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", required: true %>
+            <div class="invalid-feedback">
+              Por favor ingresa un email válido.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :password, "Contraseña", class: "form-label" %>
+            <%= f.password_field :password, autocomplete: "current-password", class: "form-control", required: true %>
+            <div class="invalid-feedback">
+              Por favor ingresa tu contraseña.
+            </div>
+          </div>
+
+          <% if devise_mapping.rememberable? %>
+            <div class="form-check mb-3">
+              <%= f.check_box :remember_me, class: "form-check-input" %>
+              <%= f.label :remember_me, "Recordarme", class: "form-check-label" %>
+            </div>
+          <% end %>
+
+          <div class="d-grid">
+            <%= f.submit "Ingresar", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+
+        <div class="mt-3 text-center">
+          <% if devise_mapping.recoverable? %>
+            <%= link_to "¿Olvidaste tu contraseña?", new_password_path(resource_name), class: "text-decoration-none" %><br><br>
+          <% end %>
+          
+          <% if devise_mapping.registerable? %>
+            <span class="text-muted">¿No tienes cuenta?</span>
+            <%= link_to "Regístrate aquí", new_user_registration_path(role: params[:role]), class: "text-decoration-none" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Bootstrap form validation
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    var forms = document.getElementsByClassName('needs-validation');
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+</script>
