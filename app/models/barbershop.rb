@@ -11,6 +11,8 @@ class Barbershop < ApplicationRecord
   
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
+
+  accepts_nested_attributes_for :branches, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   
   # Método para obtener todas las citas de todas las sucursales
   def all_appointments

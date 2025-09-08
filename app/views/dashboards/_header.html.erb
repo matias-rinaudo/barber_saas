@@ -1,0 +1,25 @@
+<div class="dashboard-header bg-primary text-white py-4 mb-4">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h1 class="mb-2">
+          <% if current_user.super_admin? %>
+              <%= link_to "Panel Admin", super_admin_dashboards_path %>
+          <% elsif current_user.owner? %>
+              <%= link_to "Sucursales", barbershop_branches_path(barbershop_id: current_user.barbershop.id) %>
+              <%= link_to "Barberos", barbershop_barbers_path(barbershop_id: current_user.barbershop.id) %>
+          <% elsif current_user.barber? %>
+              <%= link_to "Mis Citas", barbershop_appointments_path(barbershop_id: current_user.barbershop.id) %>
+          <% end %>
+
+
+
+        </h1>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <i class="fas fa-calendar-day me-2"></i>
+        <%= Date.current.strftime("%d de %B, %Y") %>
+      </div>
+    </div>
+  </div>
+</div>

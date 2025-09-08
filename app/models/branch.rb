@@ -5,9 +5,7 @@ class Branch < ApplicationRecord
   has_many :barbers, through: :barber_branches
   has_many :treatments
   
-  validates :name, presence: true
-  validates :address, presence: true
-  validates :phone, presence: true
-  
-  scope :active, -> { where(active: true) }
+  validates :name, :address, :phone, presence: true
+
+  scope :actives, -> { where(active: true) }
 end

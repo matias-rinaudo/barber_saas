@@ -7,10 +7,19 @@ Rails.application.routes.draw do
   }
 
   resources :barbershops do
+    resources :barbers
+    resources :appointments, only: [:index, :show]
     resources :branches do
-      resources :barbers, controller: 'branch_barbers', except: [:new, :edit, :show, :update]
-      resources :appointments, only: [:index, :show]
       get :reports, on: :member
+    end
+  end
+
+  resources :dashboards, except: [:index, :show, :new, :create, :edit, :update, :destroy] do
+    collection do
+      get :super_admin
+      get :owner
+      get :barber
+      get :customer
     end
   end
 end

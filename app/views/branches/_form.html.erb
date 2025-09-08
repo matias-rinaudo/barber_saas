@@ -1,0 +1,329 @@
+<% content_for :title, "Nueva Sucursal - #{@barbershop.name}" %>
+
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-10">
+      <!-- Header -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body bg-gradient-primary text-white py-4">
+          <div class="d-flex align-items-center">
+            <div class="me-4">
+              <i class="fas fa-store fa-3x opacity-75"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h1 class="h3 mb-2">Nueva Sucursal</h1>
+              <p class="mb-0 opacity-90">Completa la información básica de tu nueva sucursal</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <%= form_with model: [@barbershop, @branch], local: true, class: "needs-validation", novalidate: true do |form| %>
+            
+            <!-- Errores -->
+            <% if @branch.errors.any? %>
+              <div class="alert alert-danger border-0 shadow-sm mb-4">
+                <div class="d-flex align-items-center mb-2">
+                  <i class="fas fa-exclamation-triangle me-2"></i>
+                  <strong>Se encontraron <%= @branch.errors.count %> errores:</strong>
+                </div>
+                <ul class="mb-0 ms-4">
+                  <% @branch.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <div class="row">
+              <!-- Información básica -->
+              <div class="col-lg-6">
+                <h5 class="text-gray-800 mb-3">
+                  <i class="fas fa-info-circle text-primary me-2"></i>
+                  Información Básica
+                </h5>
+
+                <!-- Nombre de la Sucursal -->
+                <div class="mb-4">
+                  <%= form.label :name, class: "form-label fw-semibold" do %>
+                    <i class="fas fa-store text-primary me-2"></i>Nombre de la Sucursal
+                  <% end %>
+                  <%= form.text_field :name, 
+                      class: "form-control form-control-lg", 
+                      placeholder: "Ej: Sucursal Centro, Sucursal Norte...",
+                      required: true %>
+                  <div class="invalid-feedback">
+                    Por favor ingresa el nombre de la sucursal.
+                  </div>
+                  <div class="form-text">
+                    <i class="fas fa-lightbulb text-warning me-1"></i>
+                    Usa un nombre que identifique claramente la ubicación
+                  </div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="mb-4">
+                  <%= form.label :phone, class: "form-label fw-semibold" do %>
+                    <i class="fas fa-phone text-primary me-2"></i>Teléfono
+                  <% end %>
+                  <%= form.text_field :phone, 
+                      class: "form-control form-control-lg", 
+                      placeholder: "+54 261 123-4567",
+                      required: true %>
+                  <div class="invalid-feedback">
+                    Por favor ingresa un número de teléfono válido.
+                  </div>
+                </div>
+
+                <!-- Email (opcional) -->
+                <div class="mb-4">
+                  <%= form.label :email, class: "form-label fw-semibold" do %>
+                    <i class="fas fa-envelope text-primary me-2"></i>Email 
+                    <span class="text-muted">(opcional)</span>
+                  <% end %>
+                  <%= form.email_field :email, 
+                      class: "form-control form-control-lg", 
+                      placeholder: "sucursal@barberia.com" %>
+                  <div class="form-text">Email específico para esta sucursal</div>
+                </div>
+              </div>
+
+              <!-- Ubicación y detalles -->
+              <div class="col-lg-6">
+                <h5 class="text-gray-800 mb-3">
+                  <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                  Ubicación y Detalles
+                </h5>
+
+                <!-- Dirección -->
+                <div class="mb-4">
+                  <%= form.label :address, class: "form-label fw-semibold" do %>
+                    <i class="fas fa-map-marker-alt text-primary me-2"></i>Dirección Completa
+                  <% end %>
+                  <%= form.text_area :address, 
+                      class: "form-control", 
+                      rows: 3,
+                      placeholder: "Av. San Martín 1234, Ciudad, Mendoza",
+                      required: true %>
+                  <div class="invalid-feedback">
+                    Por favor ingresa la dirección completa.
+                  </div>
+                  <div class="form-text">
+                    <i class="fas fa-info-circle text-info me-1"></i>
+                    Incluye calle, número, ciudad y provincia
+                  </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-4">
+                  <%= form.label :description, class: "form-label fw-semibold" do %>
+                    <i class="fas fa-align-left text-primary me-2"></i>Descripción 
+                    <span class="text-muted">(opcional)</span>
+                  <% end %>
+                  <%= form.text_area :description, 
+                      class: "form-control", 
+                      rows: 3,
+                      placeholder: "Describe características especiales, servicios únicos, etc." %>
+                  <div class="form-text">Información adicional sobre esta sucursal</div>
+                </div>
+
+                <!-- Estado Activo -->
+                <div class="mb-4">
+                  <div class="form-check form-switch form-check-lg">
+                    <%= form.check_box :active, 
+                        { checked: true, class: "form-check-input" }, 
+                        true, false %>
+                    <%= form.label :active, class: "form-check-label fw-semibold" do %>
+                      <i class="fas fa-toggle-on text-success me-2"></i>
+                      Sucursal Activa
+                    <% end %>
+                  </div>
+                  <div class="form-text">
+                    <i class="fas fa-info-circle text-info me-1"></i>
+                    Las sucursales activas aparecerán disponibles para reservas
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="bg-light rounded p-4">
+                  <h6 class="text-gray-800 mb-3">
+                    <i class="fas fa-info-circle text-info me-2"></i>
+                    ¿Qué sucede después?
+                  </h6>
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <div class="d-flex align-items-center">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                          <i class="fas fa-users text-white"></i>
+                        </div>
+                        <div>
+                          <strong>Asignar Barberos</strong>
+                          <div class="small text-muted">Podrás asignar barberos a esta sucursal</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <div class="d-flex align-items-center">
+                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                          <i class="fas fa-cut text-white"></i>
+                        </div>
+                        <div>
+                          <strong>Configurar Servicios</strong>
+                          <div class="small text-muted">Define los tratamientos disponibles</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <div class="d-flex align-items-center">
+                        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                          <i class="fas fa-calendar text-white"></i>
+                        </div>
+                        <div>
+                          <strong>Recibir Reservas</strong>
+                          <div class="small text-muted">Los clientes podrán reservar turnos</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+
+              
+              <div>
+                <%= form.submit "Crear Sucursal", 
+                    class: "btn btn-primary btn-lg px-5 shadow-sm",
+                    data: { 
+                      disable_with: '<i class="fas fa-spinner fa-spin me-2"></i>Creando...' 
+                    } %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS personalizado -->
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .form-control-lg {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+  }
+  
+  .form-control-lg:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  }
+  
+  .form-check-input {
+    width: 3rem;
+    height: 1.5rem;
+    border-radius: 1rem;
+  }
+  
+  .form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .btn-lg {
+    border-radius: 10px;
+    padding: 12px 30px;
+    font-weight: 600;
+  }
+  
+  /* Mobile responsive adjustments */
+  @media (max-width: 768px) {
+    .btn-lg {
+      padding: 15px 20px;
+      font-size: 1rem;
+      min-height: 50px;
+    }
+    
+    .fa-md-3x {
+      font-size: 3em !important;
+    }
+    
+    .h-md-3 {
+      font-size: calc(1.3rem + 0.6vw) !important;
+    }
+    
+    /* Asegurar que los botones no se salgan del contenedor */
+    .container-fluid {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+  
+  .card {
+    border-radius: 15px;
+  }
+  
+  .breadcrumb {
+    background: none;
+    padding: 0;
+  }
+  
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    font-size: 1.2em;
+    color: #6c757d;
+  }
+</style>
+
+<!-- JavaScript para validación -->
+<script>
+  // Bootstrap form validation
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      var forms = document.getElementsByClassName('needs-validation');
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+  
+  // Auto-format phone number
+  document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.querySelector('input[name="branch[phone]"]');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 0) {
+          if (value.length <= 3) {
+            value = value;
+          } else if (value.length <= 6) {
+            value = value.slice(0, 3) + ' ' + value.slice(3);
+          } else {
+            value = value.slice(0, 3) + ' ' + value.slice(3, 6) + '-' + value.slice(6, 10);
+          }
+        }
+        e.target.value = value;
+      });
+    }
+  });
+</script>

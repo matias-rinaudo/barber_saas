@@ -1,54 +1,158 @@
+<!-- sessions/new.html.erb mejorado -->
 <div class="row justify-content-center">
   <div class="col-md-6 col-lg-4">
     <div class="card shadow">
       <div class="card-body">
-        <h2 class="card-title text-center mb-4">Iniciar sesión</h2>
+        <% if params[:role] == 'owner' %>
+          <!-- Contenido específico para propietarios -->
+          <div class="text-center mb-4">
+            <i class="bi bi-shop" style="font-size: 3rem; color: #ffc107;"></i>
+            <h2 class="card-title mt-3">Gestiona tu Barbería</h2>
+            <p class="text-muted">Ingresa o crea tu cuenta para administrar tu negocio</p>
+          </div>
+        <% else %>
+          <!-- Contenido genérico -->
+          <h2 class="card-title text-center mb-4">Iniciar sesión</h2>
+        <% end %>
         
         <%= form_with(model: resource, as: resource_name, url: session_path(resource_name), local: true, class: "needs-validation", novalidate: true) do |f| %>
           <%= hidden_field_tag :role, params[:role] %>
-
+          
           <div class="mb-3">
             <%= f.label :email, class: "form-label" %>
-            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", required: true %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", required: true, placeholder: "tu@email.com" %>
             <div class="invalid-feedback">
               Por favor ingresa un email válido.
             </div>
           </div>
-
+          
           <div class="mb-3">
             <%= f.label :password, "Contraseña", class: "form-label" %>
-            <%= f.password_field :password, autocomplete: "current-password", class: "form-control", required: true %>
+            <%= f.password_field :password, autocomplete: "current-password", class: "form-control", required: true, placeholder: "••••••••" %>
             <div class="invalid-feedback">
               Por favor ingresa tu contraseña.
             </div>
           </div>
-
+          
           <% if devise_mapping.rememberable? %>
             <div class="form-check mb-3">
               <%= f.check_box :remember_me, class: "form-check-input" %>
               <%= f.label :remember_me, "Recordarme", class: "form-check-label" %>
             </div>
           <% end %>
-
+          
           <div class="d-grid">
-            <%= f.submit "Ingresar", class: "btn btn-primary" %>
+            <%= f.submit "Ingresar", class: "btn btn-primary btn-lg" %>
           </div>
         <% end %>
-
+        
         <div class="mt-3 text-center">
           <% if devise_mapping.recoverable? %>
-            <%= link_to "¿Olvidaste tu contraseña?", new_password_path(resource_name), class: "text-decoration-none" %><br><br>
-          <% end %>
-          
-          <% if devise_mapping.registerable? %>
-            <span class="text-muted">¿No tienes cuenta?</span>
-            <%= link_to "Regístrate aquí", new_user_registration_path(role: params[:role]), class: "text-decoration-none" %>
+            <%= link_to "¿Olvidaste tu contraseña?", new_password_path(resource_name), class: "text-decoration-none small" %>
           <% end %>
         </div>
+        
+        <% if devise_mapping.registerable? %>
+          <% if params[:role] == 'owner' %>
+            <!-- CTA específico para propietarios -->
+            <div class="card bg-light border-0 mt-4">
+              <div class="card-body text-center">
+                <h5 class="mb-2">¿Primera vez en BarberSaaS?</h5>
+                <p class="text-muted small mb-3">Empieza a digitalizar tu barbería en minutos</p>
+                <%= link_to new_user_registration_path(role: params[:role]), class: "btn btn-warning btn-lg w-100" do %>
+                  <i class="bi bi-rocket-takeoff"></i> Crear mi Barbería
+                <% end %>
+              </div>
+            </div>
+          <% elsif params[:role] == 'barber' %>
+            <!-- CTA específico para barberos -->
+            <div class="card bg-light border-0 mt-4">
+              <div class="card-body text-center">
+                <h5 class="mb-2">¿Nuevo barbero?</h5>
+                <p class="text-muted small mb-3">Únete a una barbería o crea tu perfil</p>
+                <%= link_to "Crear cuenta de barbero", new_user_registration_path(role: params[:role]), class: "btn btn-outline-primary w-100" %>
+              </div>
+            </div>
+          <% elsif params[:role] == 'customer' %>
+            <!-- CTA específico para clientes -->
+            <div class="card bg-light border-0 mt-4">
+              <div class="card-body text-center">
+                <h5 class="mb-2">¿Primera vez?</h5>
+                <p class="text-muted small mb-3">Crea tu cuenta y agenda tu próximo corte</p>
+                <%= link_to "Registrarme como cliente", new_user_registration_path(role: params[:role]), class: "btn btn-outline-primary w-100" %>
+              </div>
+            </div>
+          <% else %>
+            <!-- CTA genérico -->
+            <div class="mt-4 text-center">
+              <span class="text-muted">¿No tienes cuenta?</span>
+              <%= link_to "Regístrate aquí", new_user_registration_path(role: params[:role]), class: "text-decoration-none" %>
+            </div>
+          <% end %>
+        <% end %>
       </div>
     </div>
+    
+    <% if params[:role] == 'owner' %>
+      <!-- Información adicional para propietarios -->
+      <div class="text-center mt-4">
+        <p class="text-muted small">
+          ¿Tienes dudas? 
+          <%= link_to "Ver demo", "#", class: "text-decoration-none" %> | 
+          <%= link_to "Hablar con ventas", "#", class: "text-decoration-none" %>
+        </p>
+      </div>
+    <% end %>
   </div>
 </div>
+
+<style>
+  /* Estilos adicionales para mejorar la presentación */
+  .card {
+    border-radius: 15px;
+    border: none;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    font-weight: 600;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    border: none;
+    font-weight: 600;
+    color: white;
+  }
+  
+  .btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255,193,7,0.3);
+    color: white;
+  }
+  
+  .form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255,193,7,0.25);
+  }
+  
+  /* Animación para el icono */
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+  
+  .bi-shop {
+    animation: float 3s ease-in-out infinite;
+  }
+</style>
 
 <script>
 // Bootstrap form validation

@@ -5,6 +5,7 @@
         <h2 class="card-title text-center mb-4">Registrarse</h2>
         
         <%= form_with(model: resource, as: resource_name, url: user_registration_path, local: true, class: "needs-validation", novalidate: true) do |f| %>
+          <%= f.hidden_field :role, value: params[:role] || 'customer' %>
           <%= render "devise/shared/error_messages", resource: resource %>
           
           <div class="mb-3">
@@ -41,21 +42,6 @@
             <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", required: true %>
             <div class="invalid-feedback">
               Por favor confirma tu contraseña.
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <%= f.label :role, "Tipo de usuario", class: "form-label" %>
-            <%= f.select :role, 
-                options_for_select([
-                  ['Cliente', 'customer'],
-                  ['Barbero', 'barber'],
-                  ['Propietario', 'owner']
-                ], params[:role] || 'customer'), 
-                {}, 
-                { class: "form-select", id: "role-select", required: true } %>
-            <div class="invalid-feedback">
-              Por favor selecciona un tipo de usuario.
             </div>
           </div>
 

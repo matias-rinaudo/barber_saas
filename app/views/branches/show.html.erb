@@ -1,0 +1,18 @@
+<% content_for :title, "Sucursal #{@branch.name}" %>
+
+<div class="dashboard-header text-center mb-4">
+  <h2>Sucursal: <%= @branch.name %></h2>
+  <p class="text-white"><i class="fas fa-map-marker-alt me-2"></i><%= @branch.address %> | <i class="fas fa-phone me-2"></i><%= @branch.phone %></p>
+</div>
+
+<div class="card card-modern p-4">
+  <p><strong>Nombre:</strong> <%= @branch.name %></p>
+  <p><strong>Dirección:</strong> <%= @branch.address %></p>
+  <p><strong>Teléfono:</strong> <%= @branch.phone %></p>
+  <p><strong>Activa:</strong> <%= @branch.active? ? "Sí" : "No" %></p>
+
+  <div class="mt-3">
+    <%= link_to "Editar", edit_barbershop_branch_path(@barbershop, @branch), class: "btn btn-outline-custom" %>
+    <%= link_to "Volver", barbershop_branches_path(@barbershop), class: "btn btn-outline-custom" %>
+  </div>
+</div>

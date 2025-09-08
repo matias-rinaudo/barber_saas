@@ -13,8 +13,8 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <%= stylesheet_link_tag "application" %>
-    <%= javascript_include_tag "application" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
     
     <style>
         :root {
@@ -139,151 +139,128 @@
   <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-custom">
-        <div class="container">
-            <%= link_to root_path, class: "navbar-brand" do %>
-                <i class="fas fa-cut me-2"></i>BarberSaaS
+      <div class="container">
+        <%= link_to root_path, class: "navbar-brand" do %>
+          <i class="fas fa-cut me-2"></i>BarberSaaS
+        <% end %>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <% if user_signed_in? %>
+              <% if current_user.super_admin? %>
+                <li class="nav-item">
+                  <%= link_to "Panel Admin", super_admin_dashboards_path, class: "nav-link" %>
+                </li>
+              <% elsif current_user.owner? %>
+                <li class="nav-item">
+                  <%= link_to "Sucursales", barbershop_branches_path(barbershop_id: current_user.barbershop.id), class: "nav-link" %>
+                </li>
+                <li class="nav-item">
+                  <%= link_to "Barberos", barbershop_barbers_path(barbershop_id: current_user.barbershop.id), class: "nav-link" %>
+                </li>
+              <% elsif current_user.barber? %>
+                <li class="nav-item">
+                  <%= link_to "Mis Citas", barbershop_appointments_path(barbershop_id: current_user.barbershop.id), class: "nav-link" %>
+                </li>
+              <% end %>
+
+              <li class="nav-item">
+                  <%= link_to edit_user_registration_path, class: "nav-link" do %>
+                    <i class="fas fa-cog me-2"></i> Perfil
+                  <% end %>
+              </li>
+
+              <li class="nav-item">
+                <%= link_to destroy_user_session_path,
+                      class: "nav-link",
+                      data: { method: :delete, confirm: "¿Estás seguro que deseas cerrar sesión?" } do %>
+                  <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                <% end %>
+              </li>
+
+              <li class="nav-item nav-link">
+                  <i class="fas fa-user-circle me-1"></i>
+                  <%= current_user.name %>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to new_user_session_path, class: "nav-link" do %>
+                  <i class="fas fa-sign-in-alt me-1"></i> Ingresar
+                <% end %>
+              </li>
             <% end %>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <% if user_signed_in? %>
-                        <!-- Links para usuarios logueados -->
-                        <% if current_user.super_admin? %>
-                            <li class="nav-item">
-                                <%= link_to "Panel Admin", "#", class: "nav-link" %>
-                            </li>
-                        <% elsif current_user.owner? %>
-                            <li class="nav-item">
-                                <%= link_to "Dashboard", "#", class: "nav-link" %>
-                            </li>
-                            <li class="nav-item">
-                                <%= link_to "Sucursales", "#", class: "nav-link" %>
-                            </li>
-                            <li class="nav-item">
-                                <%= link_to "Barberos", "#", class: "nav-link" %>
-                            </li>
-                        <% elsif current_user.barber? %>
-                            <li class="nav-item">
-                                <%= link_to "Mis Citas", "#", class: "nav-link" %>
-                            </li>
-                        <% end %>
-                        
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i>
-                                <%= current_user.name %>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <%= link_to edit_user_registration_path, class: "dropdown-item" do %>
-                                        <i class="fas fa-cog me-2"></i>Perfil
-                                    <% end %>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <%= link_to destroy_user_session_path, class: "dropdown-item text-danger", 
-                                        data: { method: :delete, confirm: "¿Estás seguro que deseas cerrar sesión?" } do %>
-                                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
-                                    <% end %>
-                                </li>
-                            </ul>
-                        </li>
-                    <% else %>
-                        <!-- Links para usuarios no logueados -->
-                        <li class="nav-item">
-                            <%= link_to new_user_session_path, class: "nav-link" do %>
-                                <i class="fas fa-sign-in-alt me-1"></i>Ingresar
-                            <% end %>
-                        </li>
-                    <% end %>
-                </ul>
-            </div>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <main>
-        <% unless current_page?(root_path) && !user_signed_in? %>
-            <div class="container mt-4">
-                <!-- Flash Messages -->
-                <% if notice %>
-                    <div class="alert alert-success alert-custom alert-dismissible fade show">
-                        <i class="fas fa-check-circle me-2"></i>
-                        <%= notice %>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-                    </div>
-                <% end %>
-                
-                <% if alert %>
-                    <div class="alert alert-danger alert-custom alert-dismissible fade show">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <%= alert %>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-                    </div>
-                <% end %>
-                
-                <%= yield %>
+      <% unless current_page?(root_path) && !user_signed_in? %>
+        <div class="container mt-4">
+          <!-- Flash Messages -->
+          <% if notice %>
+            <div class="alert alert-success alert-custom alert-dismissible fade show">
+              <i class="fas fa-check-circle me-2"></i>
+              <%= notice %>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
             </div>
-        <% else %>
-            <%= yield %>
-        <% end %>
+          <% end %>
+          
+          <% if alert %>
+            <div class="alert alert-danger alert-custom alert-dismissible fade show">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <%= alert %>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+            </div>
+          <% end %>
+          <br>
+          <% if user_signed_in? %>
+            <%= render 'dashboards/header', role: current_user.role %>
+          <% end %>
+          <%= yield %>
+        </div>
+      <% else %>
+        <%= yield %>
+      <% end %>
     </main>
 
-    <!-- Footer (solo en homepage) -->
+    <!-- Footer (solo en homepage si no hay sesión) -->
     <% unless user_signed_in? %>
-        <footer class="bg-dark text-white py-4 mt-5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p class="mb-0">&copy; <%= Date.current.year %> BarberSaaS. Todos los derechos reservados.</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <%= link_to "Términos", "#", class: "text-white me-3" %>
-                        <%= link_to "Privacidad", "#", class: "text-white me-3" %>
-                        <%= link_to "Soporte", "#", class: "text-white" %>
-                    </div>
-                </div>
+      <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-0">&copy; <%= Date.current.year %> BarberSaaS. Todos los derechos reservados.</p>
             </div>
-        </footer>
+          </div>
+        </div>
+      </footer>
     <% end %>
 
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS (incluye Popper necesario para dropdowns) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JS -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-hide alerts after 5 seconds
-            document.querySelectorAll('.alert:not(.alert-permanent)').forEach(function(alert) {
-                setTimeout(function() {
-                    if (typeof bootstrap !== 'undefined') {
-                        var bsAlert = new bootstrap.Alert(alert);
-                        bsAlert.close();
-                    } else {
-                        alert.style.display = 'none';
-                    }
-                }, 5000);
-            });
-
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        const offsetTop = target.offsetTop - 80; // Account for fixed navbar
-                        window.scrollTo({
-                            top: offsetTop,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
+      document.addEventListener('DOMContentLoaded', function() {
+        // Auto-hide alerts after 5 seconds
+        document.querySelectorAll('.alert:not(.alert-permanent)').forEach(function(alert) {
+          setTimeout(function() {
+            if (typeof bootstrap !== 'undefined') {
+              var bsAlert = new bootstrap.Alert(alert);
+              bsAlert.close();
+            } else {
+              alert.style.display = 'none';
+            }
+          }, 5000);
         });
+
+      });
     </script>
   </body>
 </html>
